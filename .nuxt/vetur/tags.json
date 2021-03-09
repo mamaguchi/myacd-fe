@@ -1,0 +1,53 @@
+{
+  "BaseCard": {
+    "description": "Auto imported from components/base/Card.vue"
+  },
+  "BaseItem": {
+    "description": "Auto imported from components/base/Item.vue"
+  },
+  "BaseItemGroup": {
+    "description": "Auto imported from components/base/ItemGroup.vue"
+  },
+  "BaseItemSubGroup": {
+    "description": "Auto imported from components/base/ItemSubGroup.vue"
+  },
+  "BaseMaterialAlert": {
+    "description": "Auto imported from components/base/MaterialAlert.vue"
+  },
+  "BaseMaterialCard": {
+    "description": "Auto imported from components/base/MaterialCard.vue"
+  },
+  "BaseMaterialChartCard": {
+    "description": "Auto imported from components/base/MaterialChartCard.vue"
+  },
+  "BaseMaterialSnackbar": {
+    "description": "Auto imported from components/base/MaterialSnackbar.vue"
+  },
+  "BaseMaterialStatsCard": {
+    "description": "Auto imported from components/base/MaterialStatsCard.vue"
+  },
+  "BaseMaterialTabs": {
+    "description": "Auto imported from components/base/MaterialTabs.vue"
+  },
+  "BaseMaterialTestimony": {
+    "description": "Auto imported from components/base/MaterialTestimony.vue"
+  },
+  "BaseSubheading": {
+    "description": "Auto imported from components/base/Subheading.vue"
+  },
+  "BaseVComponent": {
+    "description": "Auto imported from components/base/VComponent.vue"
+  },
+  "CoreAppBar": {
+    "description": "Auto imported from components/core/AppBar.vue"
+  },
+  "CoreDrawer": {
+    "description": "Auto imported from components/core/Drawer.vue"
+  },
+  "CoreFooter": {
+    "description": "Auto imported from components/core/Footer.vue"
+  },
+  "CoreView": {
+    "description": "Auto imported from components/core/View.vue"
+  }
+}

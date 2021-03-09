@@ -1,0 +1,23 @@
+[
+  {
+    "name": "acd",
+    "path": "/acd",
+    "component": "/home/patrick/myproj/vue_proj/DEVELOPMENT/myacd/pages/acd/index.vue",
+    "chunkName": "pages/acd/index",
+    "_name": "_31ded3e4"
+  },
+  {
+    "name": "case",
+    "path": "/case",
+    "component": "/home/patrick/myproj/vue_proj/DEVELOPMENT/myacd/pages/case/index.vue",
+    "chunkName": "pages/case/index",
+    "_name": "_3ccfd37a"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "/home/patrick/myproj/vue_proj/DEVELOPMENT/myacd/pages/index.vue",
+    "chunkName": "pages/index",
+    "_name": "_0c42984a"
+  }
+]
