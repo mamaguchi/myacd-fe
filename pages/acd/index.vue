@@ -682,65 +682,19 @@
               </v-menu>
             </v-col>
 
-            <!-- STATE -->
+            <!-- CHOOSE AN ACD -->
             <v-col
               cols="12"
-              md="3"
+              md="5"
               sm="10"
               class="text-center mx-auto"
             >
               <v-select
-                v-model="stateKKIK"
-                :items="stateSelection"
-                label="State"
-                @input="reloadDistrict"
+                v-model="acdKKIK"
+                :items="acdSelectionKKIK"
+                label="Pilih ACD"
               />
             </v-col>
-
-            <!-- DISTRICT -->
-            <v-col
-              cols="12"
-              md="3"
-              sm="10"
-              class="text-center mx-auto"
-            >
-              <v-select
-                v-model="districtKKIK"
-                :disabled="!stateKKIK"
-                :items="districtKKIKSelection"
-                label="District"
-                @input="reloadLokaliti"
-              />
-            </v-col>
-
-            <!-- LOKALITI -->
-            <v-col
-              cols="12"
-              md="3"
-              sm="10"
-              class="text-center mx-auto"
-            >
-              <v-select
-                v-model="lokalitiKKIK"
-                :disabled="!districtKKIK"
-                :items="lokalitiKKIKSelection"
-                label="Lokaliti"
-              />
-            </v-col>
-
-            <!-- LOKALITI -->
-            <!-- <v-col
-              cols="12"
-              md="4"
-              sm="4"
-              class="text-center mx-auto"
-            >
-              <v-select
-                v-model="lokalitiKKIK"
-                :items="lokalitiSelection"
-                label="Lokaliti"
-              />
-            </v-col> -->
 
             <!-- SEARCH -->
             <v-col
@@ -761,250 +715,177 @@
               cols="12"
               md="12"
               sm="12"
-              class="mx-auto"
+              class="mx-auto mt-6"
             >
               <v-container fluid fill-height>
-                <v-data-table
-                  v-if="saringanPeoples.length!=0"
-                  dense
-                  style="cursor:pointer"
-                  :headers="saringanPeopleHeaders"
-                  :items="saringanPeoples"
-                  item-key="ident"
-                  :page.sync="page"
-                  :items-per-page="itemsPerPage"
-                  multi-sort
-                  hide-default-footer
-                  class="elevation-3 white"
-                  @page-count="pageCount = $event"
-                >
-                  <!-- INLINE EDIT DIALOG -->
-                  <template #[`item.name`]="props">
-                    <v-edit-dialog
-                      :return-value.sync="props.item.name"
-                      large
-                      persistent
-                      @save="saveSaringanItemPeople(
-                        props.item.ident,
-                        'name',
-                        props.item.name)"
-                    >
-                      <div>{{ props.item.name }}</div>
-                      <template #input>
-                        <div class="mt-4 title">
-                          Update Name
-                        </div>
-                        <v-text-field
-                          v-model="props.item.name"
-                          label="Edit"
-                          single-line
-                          autofocus
-                        />
-                      </template>
-                    </v-edit-dialog>
-                  </template>
+                <v-row justify="center">
+                  <v-data-table
+                    v-if="saringanPeoples.length!=0"
+                    dense
+                    style="cursor:pointer"
+                    :headers="saringanPeopleHeaders"
+                    :items="saringanPeoples"
+                    item-key="ident"
+                    :page.sync="page"
+                    :items-per-page="itemsPerPage"
+                    multi-sort
+                    hide-default-footer
+                    class="elevation-3 white"
+                    @page-count="pageCount = $event"
+                  >
+                    <!-- INLINE EDIT DIALOG -->
+                    <template #[`item.name`]="props">
+                      <v-edit-dialog
+                        :return-value.sync="props.item.name"
+                        large
+                        persistent
+                        @save="saveSaringanItemPeople(
+                          props.item.ident,
+                          'name',
+                          props.item.name)"
+                      >
+                        <div>{{ props.item.name }}</div>
+                        <template #input>
+                          <div class="mt-4 title">
+                            Update Name
+                          </div>
+                          <v-text-field
+                            v-model="props.item.name"
+                            label="Edit"
+                            single-line
+                            autofocus
+                          />
+                        </template>
+                      </v-edit-dialog>
+                    </template>
 
-                  <template #[`item.tel`]="props">
-                    <v-edit-dialog
-                      :return-value.sync="props.item.tel"
-                      large
-                      persistent
-                      @save="saveSaringanItemPeople(
-                        props.item.ident,
-                        'tel',
-                        props.item.tel)"
-                    >
-                      <div>{{ props.item.tel }}</div>
-                      <template #input>
-                        <div class="mt-4 title">
-                          Update Telephone
-                        </div>
-                        <v-text-field
-                          v-model="props.item.tel"
-                          label="Edit"
-                          single-line
-                          autofocus
-                        />
-                      </template>
-                    </v-edit-dialog>
-                  </template>
+                    <template #[`item.tel`]="props">
+                      <v-edit-dialog
+                        :return-value.sync="props.item.tel"
+                        large
+                        persistent
+                        @save="saveSaringanItemPeople(
+                          props.item.ident,
+                          'tel',
+                          props.item.tel)"
+                      >
+                        <div>{{ props.item.tel }}</div>
+                        <template #input>
+                          <div class="mt-4 title">
+                            Update Telephone
+                          </div>
+                          <v-text-field
+                            v-model="props.item.tel"
+                            label="Edit"
+                            single-line
+                            autofocus
+                          />
+                        </template>
+                      </v-edit-dialog>
+                    </template>
 
-                  <template #[`item.address`]="props">
-                    <v-edit-dialog
-                      :return-value.sync="props.item.address"
-                      large
-                      persistent
-                      @save="saveSaringanItemPeople(
-                        props.item.ident,
-                        'address',
-                        props.item.address)"
-                    >
-                      <div>{{ props.item.address }}</div>
-                      <template #input>
-                        <div class="mt-4 title">
-                          Update Address
-                        </div>
-                        <v-text-field
-                          v-model="props.item.address"
-                          label="Edit"
-                          single-line
-                          autofocus
-                        />
-                      </template>
-                    </v-edit-dialog>
-                  </template>
+                    <template #[`item.address`]="props">
+                      <v-edit-dialog
+                        :return-value.sync="props.item.address"
+                        large
+                        persistent
+                        @save="saveSaringanItemPeople(
+                          props.item.ident,
+                          'address',
+                          props.item.address)"
+                      >
+                        <div>{{ props.item.address }}</div>
+                        <template #input>
+                          <div class="mt-4 title">
+                            Update Address
+                          </div>
+                          <v-text-field
+                            v-model="props.item.address"
+                            label="Edit"
+                            single-line
+                            autofocus
+                          />
+                        </template>
+                      </v-edit-dialog>
+                    </template>
 
-                  <template #[`item.comorbid`]="props">
-                    <v-edit-dialog
-                      :return-value.sync="props.item.comorbid"
-                      large
-                      persistent
-                      @save="saveSaringanItemPeople(
-                        props.item.ident,
-                        'comorbid',
-                        props.item.comorbid)"
-                    >
-                      <div>{{ props.item.comorbid }}</div>
-                      <template #input>
-                        <div class="mt-4 title">
-                          Update Comorbid
-                        </div>
-                        <v-text-field
-                          v-model="props.item.comorbid"
-                          label="Edit"
-                          single-line
-                          autofocus
-                        />
-                      </template>
-                    </v-edit-dialog>
-                  </template>
+                    <template #[`item.comorbid`]="props">
+                      <v-edit-dialog
+                        :return-value.sync="props.item.comorbid"
+                        large
+                        persistent
+                        @save="saveSaringanItemPeople(
+                          props.item.ident,
+                          'comorbid',
+                          props.item.comorbid)"
+                      >
+                        <div>{{ props.item.comorbid }}</div>
+                        <template #input>
+                          <div class="mt-4 title">
+                            Update Comorbid
+                          </div>
+                          <v-text-field
+                            v-model="props.item.comorbid"
+                            label="Edit"
+                            single-line
+                            autofocus
+                          />
+                        </template>
+                      </v-edit-dialog>
+                    </template>
 
-                  <template #[`item.kategorikes`]="props">
-                    <v-edit-dialog
-                      :return-value.sync="props.item.kategorikes"
-                      large
-                      persistent
-                      @save="saveSaringanItemACDActivity(
-                        props.item.tarikhACD,
-                        props.item.ident,
-                        'kategorikes',
-                        props.item.kategorikes)"
-                    >
-                      <div>{{ props.item.kategorikes }}</div>
-                      <template #input>
-                        <div class="mt-4 title">
-                          Update Kategori Kes
-                        </div>
-                        <v-select
-                          v-model="props.item.kategorikes"
-                          :items="kategorikessaringan"
-                          label="Edit"
-                        />
-                      </template>
-                    </v-edit-dialog>
-                  </template>
+                    <template #[`item.kategorikes`]="props">
+                      <v-edit-dialog
+                        :return-value.sync="props.item.kategorikes"
+                        large
+                        persistent
+                        @save="saveSaringanItemACDActivity(
+                          props.item.tarikhACD,
+                          props.item.ident,
+                          'kategorikes',
+                          props.item.kategorikes)"
+                      >
+                        <div>{{ props.item.kategorikes }}</div>
+                        <template #input>
+                          <div class="mt-4 title">
+                            Update Kategori Kes
+                          </div>
+                          <v-select
+                            v-model="props.item.kategorikes"
+                            :items="kategorikessaringan"
+                            label="Edit"
+                          />
+                        </template>
+                      </v-edit-dialog>
+                    </template>
 
-                  <template #[`item.gejala`]="props">
-                    <v-edit-dialog
-                      :return-value.sync="props.item.gejala"
-                      large
-                      persistent
-                      @save="saveSaringanItemACDActivity(
-                        props.item.tarikhACD,
-                        props.item.ident,
-                        'gejala',
-                        props.item.gejala)"
-                    >
-                      <div>{{ props.item.gejala }}</div>
-                      <template #input>
-                        <div class="mt-4 title">
-                          Update Gejala
-                        </div>
-                        <v-text-field
-                          v-model="props.item.gejala"
-                          label="Edit"
-                          single-line
-                          autofocus
-                        />
-                      </template>
-                    </v-edit-dialog>
-                  </template>
+                    <template #[`item.gejala`]="props">
+                      <v-edit-dialog
+                        :return-value.sync="props.item.gejala"
+                        large
+                        persistent
+                        @save="saveSaringanItemACDActivity(
+                          props.item.tarikhACD,
+                          props.item.ident,
+                          'gejala',
+                          props.item.gejala)"
+                      >
+                        <div>{{ props.item.gejala }}</div>
+                        <template #input>
+                          <div class="mt-4 title">
+                            Update Gejala
+                          </div>
+                          <v-text-field
+                            v-model="props.item.gejala"
+                            label="Edit"
+                            single-line
+                            autofocus
+                          />
+                        </template>
+                      </v-edit-dialog>
+                    </template>                   
 
-                  <template #[`item.jenissampel`]="props">
-                    <v-edit-dialog
-                      :return-value.sync="props.item.jenissampel"
-                      large
-                      persistent
-                      @save="saveSaringanItemSampel(
-                        props.item.ident,
-                        'jenissampel',
-                        props.item.jenissampel)"
-                    >
-                      <div>{{ props.item.jenissampel }}</div>
-                      <template #input>
-                        <div class="mt-4 title">
-                          Update Jenis Sampel
-                        </div>
-                        <v-select
-                          v-model="props.item.jenissampel"
-                          :items="jenisSampel"
-                          label="Edit"
-                        />
-                      </template>
-                    </v-edit-dialog>
-                  </template>
-
-                  <template #[`item.sampeltca`]="props">
-                    <v-datetime-picker
-                      v-model="props.item.sampeltca"
-                      label="Set Date"
-                      @input="saveSaringanItemSampel(
-                        props.item.ident,
-                        'sampeltca',
-                        props.item.sampeltca)"
-                    />
-                  </template>
-
-                  <template #[`item.bildipanggil`]="props">
-                    <v-edit-dialog
-                      :return-value.sync="props.item.bildipanggil"
-                      large
-                      persistent
-                      @save="saveSaringanItemSampel(
-                        props.item.ident,
-                        'bildipanggil',
-                        props.item.bildipanggil)"
-                    >
-                      <div>{{ props.item.bildipanggil }}</div>
-                      <template #input>
-                        <div class="mt-4 title">
-                          Update Berapa Kali Dipanggil
-                        </div>
-                        <v-text-field
-                          v-model.number="props.item.bildipanggil"
-                          label="Edit"
-                          single-line
-                          autofocus
-                          append-outer-icon="mdi-arrow-up"
-                          prepend-icon="mdi-arrow-down"
-                          @click:append-outer="props.item.bildipanggil=props.item.bildipanggil+1"
-                          @click:prepend="props.item.bildipanggil=props.item.bildipanggil-1"
-                        />
-                      </template>
-                    </v-edit-dialog>
-                  </template>
-
-                  <template #[`item.sampeldiambil`]="props">
-                    <v-checkbox
-                      v-model="props.item.sampeldiambil"
-                      @change="saveSaringanItemSampel(
-                        props.item.ident,
-                        'sampeldiambil',
-                        props.item.sampeldiambil)"
-                    />
-                  </template>
-
-                  <template #[`item.gelanghso`]="props">
+                    <!-- <template #[`item.gelanghso`]="props">
                     <v-checkbox
                       v-model="props.item.gelanghso"
                       @change="saveSaringanItemPeople(
@@ -1012,9 +893,9 @@
                         'gelanghso',
                         props.item.gelanghso)"
                     />
-                  </template>
+                  </template> -->
 
-                  <template #[`item.annex14`]="props">
+                    <!-- <template #[`item.annex14`]="props">
                     <v-checkbox
                       v-model="props.item.annex14"
                       @change="saveSaringanItemPeople(
@@ -1022,33 +903,11 @@
                         'annex14',
                         props.item.annex14)"
                     />
-                  </template>
+                  </template> -->
 
-                  <template #[`item.sampelres`]="props">
-                    <v-edit-dialog
-                      :return-value.sync="props.item.sampelres"
-                      large
-                      persistent
-                      @save="saveSaringanItemSampel(
-                        props.item.ident,
-                        'sampelres',
-                        props.item.sampelres)"
-                    >
-                      <div>{{ props.item.sampelres }}</div>
-                      <template #input>
-                        <div class="mt-4 title">
-                          Keputusan Sampel
-                        </div>
-                        <v-select
-                          v-model="props.item.sampelres"
-                          :items="sampelRes"
-                          label="Edit"
-                        />
-                      </template>
-                    </v-edit-dialog>
-                  </template>
+                    
 
-                  <template #[`item.pelepasan`]="props">
+                    <!-- <template #[`item.pelepasan`]="props">
                     <v-checkbox
                       v-model="props.item.pelepasan"
                       @change="saveSaringanItemPeople(
@@ -1056,69 +915,54 @@
                         'pelepasan',
                         props.item.pelepasan)"
                     />
-                  </template>
+                  </template> -->
 
-                  <!-- TABLE HEADER CONFIGURATION -->
-                  <template #[`header.name`]="{ header }">
-                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.age`]="{ header }">
-                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.ident`]="{ header }">
-                    <span class="white--text font-weight-medium">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.tel`]="{ header }">
-                    <span class="white--text font-weight-medium">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.address`]="{ header }">
-                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.comorbid`]="{ header }">
-                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.locality`]="{ header }">
-                    <span class="white--text font-weight-medium">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.district`]="{ header }">
-                    <span class="white--text font-weight-medium">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.state`]="{ header }">
-                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                  </template>
-                  <!-- <template #[`header.tarikhACD`]="{ header }">
+                    <!-- TABLE HEADER CONFIGURATION -->
+                    <template #[`header.tarikhACD`]="{ header }">
+                      <span class="white--text font-weight-medium">{{ header.text }}</span>
+                    </template>
+                    <template #[`header.name`]="{ header }">
+                      <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                    </template>
+                    <template #[`header.age`]="{ header }">
+                      <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                    </template>
+                    <template #[`header.ident`]="{ header }">
+                      <span class="white--text font-weight-medium">{{ header.text }}</span>
+                    </template>
+                    <template #[`header.tel`]="{ header }">
+                      <span class="white--text font-weight-medium">{{ header.text }}</span>
+                    </template>
+                    <template #[`header.address`]="{ header }">
+                      <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                    </template>
+                    <template #[`header.comorbid`]="{ header }">
+                      <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                    </template>
+                    <template #[`header.kategorikes`]="{ header }">
+                      <span class="white--text font-weight-medium">{{ header.text }}</span>
+                    </template>
+                    <template #[`header.gejala`]="{ header }">
+                      <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                    </template>                                      
+                    <!-- <template #[`header.locality`]="{ header }">
                     <span class="white--text font-weight-medium">{{ header.text }}</span>
                   </template> -->
-                  <template #[`header.kategorikes`]="{ header }">
+                    <!-- <template #[`header.district`]="{ header }">
                     <span class="white--text font-weight-medium">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.gejala`]="{ header }">
+                  </template> -->
+                    <!-- <template #[`header.state`]="{ header }">
                     <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.jenissampel`]="{ header }">
-                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.sampeltca`]="{ header }">
-                    <span class="white--text font-weight-medium">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.bildipanggil`]="{ header }">
-                    <span class="white--text font-weight-medium">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.sampeldiambil`]="{ header }">
-                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                  </template>
-                  <template #[`header.gelanghso`]="{ header }">
+                  </template> -->
+                  <!-- <template #[`header.gelanghso`]="{ header }">
                     <span class="white--text font-weight-medium">{{ header.text }}</span>
                   </template>
                   <template #[`header.annex14`]="{ header }">
                     <span class="white--text font-weight-medium">{{ header.text }}</span>
                   </template>
-                  <template #[`header.sampelres`]="{ header }">
-                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                  </template>
                   <template #[`header.pelepasan`]="{ header }">
                     <span class="white--text font-weight-medium">{{ header.text }}</span>
-                  </template>
+                  </template> -->
 
                   <!-- TOOLBAR -->
                   <!-- <template #top>
@@ -1133,7 +977,8 @@
                       </v-btn>
                     </v-toolbar>
                   </template> -->
-                </v-data-table>
+                  </v-data-table>
+                </v-row>
               </v-container>
             </v-col>
 
@@ -1145,6 +990,261 @@
                 :length="pageCount"
               />
             </v-col>
+
+            <!-- EDIT DIALOG -->
+            <v-dialog
+              v-model="editDialog"
+              max-width="700px"
+              @keydown.enter="save"
+              @click:outside="close"
+            >
+              <v-form @submit.prevent="submit">
+                <v-card>
+                  <v-card-title>
+                    <span class="headline green--text">Edit</span>
+                  </v-card-title>
+
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <!-- GELANGHSO -->
+                        <v-col
+                          cols="12"
+                          sm="4"
+                          md="10"
+                          class="mx-auto text-center"
+                        >
+                          <v-checkbox
+                            v-model="editedItem.gelanghso"
+                            @change="saveSaringanItemPeople(
+                              editedItem.ident,
+                              'gelanghso',
+                              editedItem.gelanghso)"
+                          />
+                        </v-col>
+
+                        <!-- ANNEX14 -->
+                        <v-col
+                          cols="12"
+                          sm="4"
+                          md="10"
+                          class="mx-auto text-center"
+                        >
+                          <v-checkbox
+                            v-model="editedItem.annex14"
+                            @change="saveSaringanItemPeople(
+                              editedItem.ident,
+                              'annex14',
+                              editedItem.annex14)"
+                          />
+                        </v-col>
+
+                        <!-- PELEPASAN -->
+                        <v-col
+                          cols="12"
+                          sm="4"
+                          md="10"
+                          class="mx-auto text-center"
+                        >
+                          <v-checkbox
+                            v-model="editedItem.pelepasan"
+                            @change="saveSaringanItemPeople(
+                              editedItem.ident,
+                              'pelepasan',
+                              editedItem.pelepasan)"
+                          />
+                        </v-col>
+                       
+                        <!-- NEWLINE -->
+                        <v-col
+                          cols="12"
+                          md="12"
+                        >
+                          <div v-show="false" />
+                        </v-col>                  
+                        <v-col
+                          cols="12"
+                          md="12"
+                        >
+                          <v-divider />
+                        </v-col>
+
+                        <!-- V-DATA-TABLE: SAMPLE -->
+                        <v-col
+                          cols="12"
+                          md="12"
+                          sm="12"
+                          class="mx-auto mt-6"
+                        >
+                          <v-container fluid fill-height>
+                            <v-row justify="center">
+                              <v-data-table
+                                dense
+                                :headers="ssHeaders"
+                                :items="ss"
+                                item-key="ident"
+                                :page.sync="ssPage"
+                                :items-per-page="ssItemsPerPage"
+                                multi-sort
+                                hide-default-footer
+                                class="elevation-3 white"
+                                @page-count="ssPageCount = $event"
+                              >
+                                <!-- INLINE EDIT DIALOG -->
+                                <template #[`item.jenissampel`]="props">
+                                  <v-edit-dialog
+                                    :return-value.sync="props.item.jenissampel"
+                                    large
+                                    persistent
+                                    @save="saveSaringanItemSampel(
+                                      props.item.ident,
+                                      'jenissampel',
+                                      props.item.jenissampel)"
+                                  >
+                                    <div>{{ props.item.jenissampel }}</div>
+                                    <template #input>
+                                      <div class="mt-4 title">
+                                        Update Jenis Sampel
+                                      </div>
+                                      <v-select
+                                        v-model="props.item.jenissampel"
+                                        :items="jenisSampel"
+                                        label="Edit"
+                                      />
+                                    </template>
+                                  </v-edit-dialog>
+                                </template>
+
+                                <template #[`item.sampeltca`]="props">
+                                  <v-datetime-picker
+                                    v-model="props.item.sampeltca"
+                                    label="Set Date"
+                                    @input="saveSaringanItemSampel(
+                                      props.item.ident,
+                                      'sampeltca',
+                                      props.item.sampeltca)"
+                                  />
+                                </template>
+
+                                <template #[`item.bildipanggil`]="props">
+                                  <v-edit-dialog
+                                    :return-value.sync="props.item.bildipanggil"
+                                    large
+                                    persistent
+                                    @save="saveSaringanItemSampel(
+                                      props.item.ident,
+                                      'bildipanggil',
+                                      props.item.bildipanggil)"
+                                  >
+                                    <div>{{ props.item.bildipanggil }}</div>
+                                    <template #input>
+                                      <div class="mt-4 title">
+                                        Update Berapa Kali Dipanggil
+                                      </div>
+                                      <v-text-field
+                                        v-model.number="props.item.bildipanggil"
+                                        label="Edit"
+                                        single-line
+                                        autofocus
+                                        append-outer-icon="mdi-arrow-up"
+                                        prepend-icon="mdi-arrow-down"
+                                        @click:append-outer="props.item.bildipanggil=props.item.bildipanggil+1"
+                                        @click:prepend="props.item.bildipanggil=props.item.bildipanggil-1"
+                                      />
+                                    </template>
+                                  </v-edit-dialog>
+                                </template>
+
+                                <template #[`item.sampeldiambil`]="props">
+                                  <v-checkbox
+                                    v-model="props.item.sampeldiambil"
+                                    @change="saveSaringanItemSampel(
+                                      props.item.ident,
+                                      'sampeldiambil',
+                                      props.item.sampeldiambil)"
+                                  />
+                                </template>
+
+                                <template #[`item.sampelres`]="props">
+                                  <v-edit-dialog
+                                    :return-value.sync="props.item.sampelres"
+                                    large
+                                    persistent
+                                    @save="saveSaringanItemSampel(
+                                      props.item.ident,
+                                      'sampelres',
+                                      props.item.sampelres)"
+                                  >
+                                    <div>{{ props.item.sampelres }}</div>
+                                    <template #input>
+                                      <div class="mt-4 title">
+                                        Keputusan Sampel
+                                      </div>
+                                      <v-select
+                                        v-model="props.item.sampelres"
+                                        :items="sampelRes"
+                                        label="Edit"
+                                      />
+                                    </template>
+                                  </v-edit-dialog>
+                                </template>
+
+                                <!-- TABLE HEADER CONFIGURATION -->
+                                <template #[`header.jenissampel`]="{ header }">
+                                  <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                                </template>
+                                <template #[`header.sampeltca`]="{ header }">
+                                  <span class="white--text font-weight-medium">{{ header.text }}</span>
+                                </template>
+                                <template #[`header.bildipanggil`]="{ header }">
+                                  <span class="white--text font-weight-medium">{{ header.text }}</span>
+                                </template>
+                                <template #[`header.sampeldiambil`]="{ header }">
+                                  <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                                </template>
+                                <template #[`header.sampelres`]="{ header }">
+                                  <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                                </template>
+
+                              </v-data-table>
+                            </v-row>
+                          </v-container>
+                        </v-col>
+
+                        
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      color="blue darken-1"
+                      text
+                      @click="close"
+                      @keydown.esc="close"
+                    >
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      color="blue darken-1"
+                      text
+                      @click="save"
+                    >
+                      Save
+                    </v-btn>
+                    <v-btn
+                      color="yellow darken-3"
+                      text
+                      :disabled="editedIndex===-1"
+                      @click="deleteItem"
+                    >
+                      Delete
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-form>
+            </v-dialog>
 
             <v-col cols="12" class="mb-16 pb-8">
               <span />
@@ -1168,6 +1268,9 @@ export default {
     return {
       tab: null,
       tabItems: ['Create ACD', 'ACD', 'Klinik Kesihatan & IK'],
+
+      // Create New ACD
+      acdName: '',
 
       // ACD
       acd: '',
@@ -1252,34 +1355,48 @@ export default {
       acdMenu: false,
       tarikhacd: '',
       // fromDateVal: null,
-      stateKKIK: '',
-      districtKKIK: '',
-      lokalitiKKIK: '',
-      districtKKIKSelection: [],
-      lokalitiKKIKSelection: [],
+      acdKKIK: '',
+      acdSelectionKKIK: [],
       saringanPeoples: [],
       saringanPeopleHeaders: [
+        { text: 'Tarikh ACD', value: 'tarikhACD', sortable: true, class: 'success', width: '50px' },
         { text: 'Nama', value: 'name', align: 'start', sortable: true, class: 'success', width: '150px' },
-        { text: 'Umur', value: 'age', align: 'start', sortable: true, class: 'success', width: '50px' },
+        { text: 'Umur', value: 'age', sortable: true, class: 'success', width: '50px' },
         { text: 'IC/Passport', value: 'ident', sortable: true, class: 'success', width: '50px' },
         { text: 'Tel', value: 'tel', sortable: true, class: 'success', width: '50px' },
+        { text: 'Address', value: 'address', sortable: true, class: 'success', width: '50px' },
         { text: 'Comorbid', value: 'comorbid', sortable: true, class: 'success', width: '80px' },
         { text: 'Kategori Kes', value: 'kategorikes', sortable: true, class: 'success', width: '50px' },
-        { text: 'Gejala', value: 'gejala', sortable: true, class: 'success', width: '80px' },
+        { text: 'Gejala', value: 'gejala', sortable: true, class: 'success', width: '80px' }
+        // { text: 'Jenis Sampel', value: 'jenissampel', sortable: true, class: 'success', width: '50px' },
+        // { text: 'Sampel TCA', value: 'sampeltca', sortable: true, class: 'success', width: '160px' },
+        // { text: 'Berapa Kali Dipanggil', value: 'bildipanggil', sortable: true, class: 'success', width: '50px' },
+        // { text: 'Sampel Diambil', value: 'sampeldiambil', sortable: true, class: 'success', width: '50px' },
+        // { text: 'Gelang HSO', value: 'gelanghso', sortable: true, class: 'success', width: '50px' },
+        // { text: 'Annex 14', value: 'annex14', sortable: true, class: 'success', width: '50px' },
+        // { text: 'Keputusan Sampel', value: 'sampelres', sortable: true, class: 'success', width: '50px' },
+        // { text: 'Pelepasan', value: 'pelepasan', sortable: true, class: 'success', width: '50px' },
+        // { text: 'Locality', value: 'locality', sortable: true, class: 'success', width: '50px' },
+        // { text: 'District', value: 'district', sortable: true, class: 'success', width: '50px' },
+        // { text: 'State', value: 'state', sortable: true, class: 'success', width: '50px' }
+      ],
+      editDialog: false,
+      editedItem: {
+        gelanghso: '',
+        annex14: '',
+        pelepasan: ''        
+      },
+      ss: [], //saringan sampel(ss)
+      ssHeaders: [
         { text: 'Jenis Sampel', value: 'jenissampel', sortable: true, class: 'success', width: '50px' },
         { text: 'Sampel TCA', value: 'sampeltca', sortable: true, class: 'success', width: '160px' },
         { text: 'Berapa Kali Dipanggil', value: 'bildipanggil', sortable: true, class: 'success', width: '50px' },
         { text: 'Sampel Diambil', value: 'sampeldiambil', sortable: true, class: 'success', width: '50px' },
-        { text: 'Gelang HSO', value: 'gelanghso', sortable: true, class: 'success', width: '50px' },
-        { text: 'Annex 14', value: 'annex14', sortable: true, class: 'success', width: '50px' },
         { text: 'Keputusan Sampel', value: 'sampelres', sortable: true, class: 'success', width: '50px' },
-        { text: 'Pelepasan', value: 'pelepasan', sortable: true, class: 'success', width: '50px' },
-        { text: 'Address', value: 'address', sortable: true, class: 'success', width: '50px' },
-        { text: 'Locality', value: 'locality', sortable: true, class: 'success', width: '50px' },
-        { text: 'District', value: 'district', sortable: true, class: 'success', width: '50px' },
-        { text: 'State', value: 'state', sortable: true, class: 'success', width: '50px' }
-        // { text: 'Tarikh ACD', value: 'tarikhACD', sortable: true, class: 'success', width: '50px' }
-      ]
+      ],
+      ssPage: 1,
+      ssPageCount: 0,
+      ssItemsPerPage: 10,
     }
   },
 
@@ -1311,28 +1428,23 @@ export default {
 
   watch: {
     tab (val) {
-      if (val === 1) {
+      if (val === 1 || val === 2) {
         this.loadACDSelection()
       }
     }
   },
 
-  created () {
-    this.reloadRumahAndSaringan()
-    this.reloadSaringanKKIK()
-  },
-
   methods: {
     async reloadDistrict () {
-      if (this.state === '' && 
+      if (this.state === '' &&
         this.stateKKIK === '') {
         return
       }
-      
+
       const payload = {
-        state: this.tab===0 ? this.state : this.stateKKIK
+        state: this.tab === 0 ? this.state : this.stateKKIK
       }
-      
+
       try {
         let response
         if (process.env.NODE_ENV === 'production') {
@@ -1346,7 +1458,7 @@ export default {
             payload
           )
         }
-        if (this.tab===0) {
+        if (this.tab === 0) {
           this.districtSelection = response.data.districts
         } else {
           this.districtKKIKSelection = response.data.districts
@@ -1371,8 +1483,8 @@ export default {
       }
 
       const payload = {
-        state: this.tab===0 ? this.state : this.stateKKIK,
-        district: this.tab===0 ? this.district : this.districtKKIK
+        state: this.tab === 0 ? this.state : this.stateKKIK,
+        district: this.tab === 0 ? this.district : this.districtKKIK
       }
 
       try {
@@ -1388,7 +1500,7 @@ export default {
             payload
           )
         }
-        if (this.tab===0) {
+        if (this.tab === 0) {
           this.lokalitiSelection = response.data.localities
         } else {
           this.lokalitiKKIKSelection = response.data.localities
@@ -1413,8 +1525,8 @@ export default {
         name: this.acdName,
         locality: this.lokaliti,
         district: this.district,
-        state: this.state,        
-      }      
+        state: this.state
+      }
 
       try {
         if (process.env.NODE_ENV === 'production') {
@@ -1435,17 +1547,17 @@ export default {
         alert('ACD Baru Berjaya Didaftarkan')
       } catch (error) {
         if (error.response) {
-        // 
+        //
           alert('Masalah network, sila cuba sebentar lagi')
         } else if (error.request) {
-        // 
+        //
         } else {
-        // 
+        //
         }
       }
     },
 
-    async loadACDSelection () {      
+    async loadACDSelection () {
       const payload = {
         ident: this.searchEP
       }
@@ -1467,7 +1579,11 @@ export default {
           this.acdSelection.length = 0
           return
         }
-        this.acdSelection = [...response.data.acds]        
+        if (this.tab === 1) {
+          this.acdSelection = [...response.data.acds]
+        } else if (this.tab === 2) {
+          this.acdSelectionKKIK = [...response.data.acds]
+        }
       } catch (error) {
         if (error.response) {
           alert('Masalah network, sila cuba sebentar lagi')
@@ -1509,23 +1625,24 @@ export default {
             payload
           )
         }
-        if (response.data.state === 'NOTFOUND') {
-          this.rumah[0].bilrumahk = '0'
-          this.rumah[0].bilrumahp = '0'
-          this.rumah[0].bilrumah = '0'
-          return
-        }
+        // if (response.data.state === 'NOTFOUND') {
+        //   this.rumah[0].bilrumahk = '0'
+        //   this.rumah[0].bilrumahp = '0'
+        //   this.rumah[0].bilrumah = '0'
+        //   return
+        // }
         this.rumah[0].bilrumahk = response.data.bilrumahk
         this.rumah[0].bilrumahp = response.data.bilrumahp
-        this.rumah[0].bilrumah = response.data.bilrumahk + response.data.bilrumahp
+        this.rumah[0].bilrumah = parseInt(response.data.bilrumahk) +
+          parseInt(response.data.bilrumahp)
       } catch (error) {
         if (error.response) {
-        // 
+        //
           alert('Masalah network, sila cuba sebentar lagi')
         } else if (error.request) {
-        // 
+        //
         } else {
-        // 
+        //
         }
       }
     },
@@ -1556,15 +1673,15 @@ export default {
         this.penghuni[0].wargaemas = response.data.bilWargaemas
       } catch (error) {
         if (error.response) {
-        // 
+        //
           alert('Masalah network, sila cuba sebentar lagi')
         } else if (error.request) {
-        // 
+        //
         } else {
-        // 
+        //
         }
       }
-    },            
+    },
 
     lawatanBaru () {
       this.lawatanRumahBaru = true
@@ -1578,9 +1695,9 @@ export default {
       const payload = {
         acdName: this.acd,
         tarikhACD: this.today,
-        locality: this.lokaliti,
-        district: this.district,
-        state: this.state,
+        // locality: this.lokaliti,
+        // district: this.district,
+        // state: this.state,
         bilrumahk: this.isRumahKosong === 'ya' ? 1 : 0,
         bilrumahp: this.isRumahKosong === 'tidak' ? 1 : 0
       }
@@ -1601,15 +1718,15 @@ export default {
         this.reloadRumah()
         alert('Bil Rumah Updated')
       } catch (error) {
-        if (error.response) {        
+        if (error.response) {
           alert('Masalah network, sila cuba sebentar lagi')
         } else if (error.request) {
-        // 
+        //
         } else {
-        // 
+        //
         }
       }
-    },    
+    },
 
     async doSearchEP () {
       if (this.searchEP === '') {
@@ -1664,7 +1781,7 @@ export default {
     clearSearchHistory () {
       this.searchEP = ''
       this.searchEPHint = ''
-    },        
+    },
 
     async tambahSaringan () {
       if (this.acd === '') {
@@ -1685,7 +1802,7 @@ export default {
         kategorikes: this.kategorikes,
         gejala: this.gejala,
         comorbid: this.comorbid
-      }      
+      }
 
       try {
         if (process.env.NODE_ENV === 'production') {
@@ -1705,22 +1822,25 @@ export default {
         alert('Saringan Baru Berjaya Didaftarkan')
       } catch (error) {
         if (error.response) {
-        // 
+        //
           alert('Masalah network, sila cuba sebentar lagi')
         } else if (error.request) {
-        // 
+        //
         } else {
-        // 
+        //
         }
       }
     },
 
     clearSaringanData () {
       this.name = ''
+      this.dob = ''
       this.ident = ''
       this.tel = ''
       this.address = ''
+      this.comorbid = ''
       this.kategorikes = ''
+      this.gejala = ''
     },
 
     getAge (dob) {
@@ -1761,8 +1881,10 @@ export default {
         return
       }
       const payload = {
-        acdName: this.acd,
-        tarikhACD: this.tarikhacd,
+        acdName: this.acdKKIK,
+        tarikhACD: this.tarikhacd
+          ? this.tarikhacd
+          : '%-%-%'
         // locality: this.lokalitiKKIK,
         // district: this.district,
         // state: this.state
@@ -1791,10 +1913,10 @@ export default {
             // locality: this.lokalitiKKIK,
             // district: this.district,
             // state: this.state,
-            // tarikhACD: this.tarikhacd,
+            tarikhACD: response.data.peoples[i].tarikhACD,
             comorbid: response.data.peoples[i].comorbid,
             kategorikes: response.data.peoples[i].kategorikes,
-            gejala: response.data.peoples[i].gejala,
+            gejala: response.data.peoples[i].gejala
             // jenissampel: response.data.peoples[i].jenissampel,
             // bildipanggil: parseInt(response.data.peoples[i].bildipanggil),
             // sampeldiambil: response.data.peoples[i].sampeldiambil,
