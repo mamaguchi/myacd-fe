@@ -646,10 +646,24 @@
             v-if="tabitem === 'Klinik Kesihatan & IK'"
             class="mt-6 mb-16 pb-16"
           >
+            <!-- CHOOSE AN ACD -->
+            <v-col
+              cols="12"
+              md="5"
+              sm="10"
+              class="text-center mx-auto"
+            >
+              <v-select
+                v-model="acdKKIK"
+                :items="acdSelectionKKIK"
+                label="Pilih ACD"
+              />
+            </v-col>
+
             <!-- TARIKH ACD -->
             <v-col
               cols="12"
-              md="3"
+              md="5"
               sm="10"
               class="text-center mx-auto"
             >
@@ -666,6 +680,7 @@
               >
                 <template #activator="{ on }">
                   <v-text-field
+                    style="cursor:pointer"
                     label="ACD Date"
                     prepend-icon="mdi-calendar"
                     readonly
@@ -682,20 +697,6 @@
               </v-menu>
             </v-col>
 
-            <!-- CHOOSE AN ACD -->
-            <v-col
-              cols="12"
-              md="5"
-              sm="10"
-              class="text-center mx-auto"
-            >
-              <v-select
-                v-model="acdKKIK"
-                :items="acdSelectionKKIK"
-                label="Pilih ACD"
-              />
-            </v-col>
-
             <!-- SEARCH -->
             <v-col
               cols="12"
@@ -710,6 +711,15 @@
               </v-btn>
             </v-col>
 
+            <v-col
+              cols="12"
+              md="10"
+              sm="10"
+              class="text-center mx-auto"
+            >
+              <span class="text-caption">{{ acdSearchHint }}</span>
+            </v-col>
+
             <!-- SARINGAN SEARCH RESULTS -->
             <v-col
               cols="12"
@@ -722,7 +732,6 @@
                   <v-data-table
                     v-if="saringanPeoples.length!=0"
                     dense
-                    style="cursor:pointer"
                     :headers="saringanPeopleHeaders"
                     :items="saringanPeoples"
                     item-key="ident"
@@ -757,6 +766,16 @@
                           />
                         </template>
                       </v-edit-dialog>
+                    </template>
+
+                    <template #[`item.ident`]="props">
+                      <div
+                        style="cursor:pointer"
+                        class="blue--text text--darken-2"
+                        @click="loadHSOandSampel(props.item)"
+                      >
+                        {{ props.item.ident }}
+                      </div>
                     </template>
 
                     <template #[`item.tel`]="props">
@@ -845,7 +864,11 @@
                           'kategorikes',
                           props.item.kategorikes)"
                       >
-                        <div>{{ props.item.kategorikes }}</div>
+                        <div
+                          class="amber--text text--darken-4"
+                        >
+                          {{ props.item.kategorikes }}
+                        </div>
                         <template #input>
                           <div class="mt-4 title">
                             Update Kategori Kes
@@ -854,6 +877,7 @@
                             v-model="props.item.kategorikes"
                             :items="kategorikessaringan"
                             label="Edit"
+                            @change="props.item.gejala=''"
                           />
                         </template>
                       </v-edit-dialog>
@@ -870,7 +894,11 @@
                           'gejala',
                           props.item.gejala)"
                       >
-                        <div>{{ props.item.gejala }}</div>
+                        <div
+                          class="amber--text text--darken-2"
+                        >
+                          {{ props.item.gejala }}
+                        </div>
                         <template #input>
                           <div class="mt-4 title">
                             Update Gejala
@@ -883,7 +911,7 @@
                           />
                         </template>
                       </v-edit-dialog>
-                    </template>                   
+                    </template>
 
                     <!-- <template #[`item.gelanghso`]="props">
                     <v-checkbox
@@ -904,8 +932,6 @@
                         props.item.annex14)"
                     />
                   </template> -->
-
-                    
 
                     <!-- <template #[`item.pelepasan`]="props">
                     <v-checkbox
@@ -944,7 +970,7 @@
                     </template>
                     <template #[`header.gejala`]="{ header }">
                       <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                    </template>                                      
+                    </template>
                     <!-- <template #[`header.locality`]="{ header }">
                     <span class="white--text font-weight-medium">{{ header.text }}</span>
                   </template> -->
@@ -991,22 +1017,33 @@
               />
             </v-col>
 
-            <!-- EDIT DIALOG -->
+            <!-- EDIT DIALOG: HSO & Sampel -->
             <v-dialog
               v-model="editDialog"
               max-width="700px"
-              @keydown.enter="save"
+              @keydown.enter="close"
               @click:outside="close"
             >
               <v-form @submit.prevent="submit">
                 <v-card>
                   <v-card-title>
-                    <span class="headline green--text">Edit</span>
+                    <span class="grey--text ml-3">{{ editHSOandSampelTitle }}</span>
                   </v-card-title>
+                  <v-card-subtitle>
+                    <span class="grey--text ml-3">{{ editHSOandSampelSubtitle }}</span>
+                  </v-card-subtitle>
 
                   <v-card-text>
                     <v-container>
                       <v-row>
+                        <!-- NEWLINE -->
+                        <v-col
+                          cols="12"
+                          md="12"
+                        >
+                          <v-divider />
+                        </v-col>
+
                         <!-- GELANGHSO -->
                         <v-col
                           cols="12"
@@ -1016,7 +1053,8 @@
                         >
                           <v-checkbox
                             v-model="editedItem.gelanghso"
-                            @change="saveSaringanItemPeople(
+                            label="Gelang HSO"
+                            @change="saveSaringanItemHSO(
                               editedItem.ident,
                               'gelanghso',
                               editedItem.gelanghso)"
@@ -1032,7 +1070,8 @@
                         >
                           <v-checkbox
                             v-model="editedItem.annex14"
-                            @change="saveSaringanItemPeople(
+                            label="Annex14"
+                            @change="saveSaringanItemHSO(
                               editedItem.ident,
                               'annex14',
                               editedItem.annex14)"
@@ -1048,33 +1087,38 @@
                         >
                           <v-checkbox
                             v-model="editedItem.pelepasan"
-                            @change="saveSaringanItemPeople(
-                              editedItem.ident,
-                              'pelepasan',
-                              editedItem.pelepasan)"
+                            label="Pelepasan (Annex 17)"
+                            @change="saveSaringanItemPelepasan"
                           />
                         </v-col>
-                       
+
                         <!-- NEWLINE -->
                         <v-col
                           cols="12"
                           md="12"
                         >
                           <div v-show="false" />
-                        </v-col>                  
+                        </v-col>
                         <v-col
                           cols="12"
                           md="12"
                         >
                           <v-divider />
                         </v-col>
+                        <v-col
+                          cols="12"
+                          md="12"
+                          class="text-left"
+                        >
+                          <span class="text-h5 text-overline">Sampel</span>
+                        </v-col>
 
-                        <!-- V-DATA-TABLE: SAMPLE -->
+                        <!-- V-DATA-TABLE: SARINGAN SAMPLE(ss) -->
                         <v-col
                           cols="12"
                           md="12"
                           sm="12"
-                          class="mx-auto mt-6"
+                          class="mx-auto mt-2"
                         >
                           <v-container fluid fill-height>
                             <v-row justify="center">
@@ -1097,7 +1141,7 @@
                                     large
                                     persistent
                                     @save="saveSaringanItemSampel(
-                                      props.item.ident,
+                                      editedItem.ident,
                                       'jenissampel',
                                       props.item.jenissampel)"
                                   >
@@ -1120,7 +1164,7 @@
                                     v-model="props.item.sampeltca"
                                     label="Set Date"
                                     @input="saveSaringanItemSampel(
-                                      props.item.ident,
+                                      editedItem.ident,
                                       'sampeltca',
                                       props.item.sampeltca)"
                                   />
@@ -1132,7 +1176,7 @@
                                     large
                                     persistent
                                     @save="saveSaringanItemSampel(
-                                      props.item.ident,
+                                      editedItem.ident,
                                       'bildipanggil',
                                       props.item.bildipanggil)"
                                   >
@@ -1159,7 +1203,7 @@
                                   <v-checkbox
                                     v-model="props.item.sampeldiambil"
                                     @change="saveSaringanItemSampel(
-                                      props.item.ident,
+                                      editedItem.ident,
                                       'sampeldiambil',
                                       props.item.sampeldiambil)"
                                   />
@@ -1171,11 +1215,28 @@
                                     large
                                     persistent
                                     @save="saveSaringanItemSampel(
-                                      props.item.ident,
+                                      editedItem.ident,
                                       'sampelres',
                                       props.item.sampelres)"
                                   >
-                                    <div>{{ props.item.sampelres }}</div>
+                                    <div
+                                      v-if="props.item.sampelres==='Negatif'"
+                                      class="green--text"
+                                    >
+                                      {{ props.item.sampelres }}
+                                    </div>
+                                    <div
+                                      v-else-if="props.item.sampelres==='Positif'"
+                                      class="red--text"
+                                    >
+                                      {{ props.item.sampelres }}
+                                    </div>
+                                    <div
+                                      v-else
+                                      class="amber--text text--darken-2"
+                                    >
+                                      {{ props.item.sampelres }}
+                                    </div>
                                     <template #input>
                                       <div class="mt-4 title">
                                         Keputusan Sampel
@@ -1205,13 +1266,10 @@
                                 <template #[`header.sampelres`]="{ header }">
                                   <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
                                 </template>
-
                               </v-data-table>
                             </v-row>
                           </v-container>
                         </v-col>
-
-                        
                       </v-row>
                     </v-container>
                   </v-card-text>
@@ -1221,29 +1279,68 @@
                     <v-btn
                       color="blue darken-1"
                       text
+                      class="mt-2 mr-6 mb-2"
                       @click="close"
                       @keydown.esc="close"
                     >
-                      Cancel
+                      Done
                     </v-btn>
-                    <v-btn
+                    <!-- <v-btn
                       color="blue darken-1"
                       text
                       @click="save"
                     >
                       Save
-                    </v-btn>
-                    <v-btn
+                    </v-btn> -->
+                    <!-- <v-btn
                       color="yellow darken-3"
                       text
                       :disabled="editedIndex===-1"
                       @click="deleteItem"
                     >
                       Delete
-                    </v-btn>
+                    </v-btn> -->
                   </v-card-actions>
                 </v-card>
               </v-form>
+            </v-dialog>
+
+            <!-- DIALOG: PELEPASAN CONFIRMATION -->
+            <v-dialog
+              v-model="pelepasanDialog"
+              max-width="700px"
+              @keydown.enter="pelepasanDialogYes"
+              @click:outside="pelepasanDialogNo"
+            >
+              <v-card>
+                <v-card-title>
+                  <span class="font-weight-bold">Ada Sampel Yang Belum Negative</span>
+                </v-card-title>
+
+                <v-card-text>
+                  <span>Adakah anda pasti untuk mengeluarkan pelepasan Annex17?</span>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer />
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    class="mt-2 mr-6 mb-2"
+                    @keydown.esc="pelepasanDialogNo"
+                    @click="pelepasanDialogNo"
+                  >
+                    No
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="pelepasanDialogYes"
+                  >
+                    Yes
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
             </v-dialog>
 
             <v-col cols="12" class="mb-16 pb-8">
@@ -1356,6 +1453,7 @@ export default {
       tarikhacd: '',
       // fromDateVal: null,
       acdKKIK: '',
+      acdSearchHint: '',
       acdSelectionKKIK: [],
       saringanPeoples: [],
       saringanPeopleHeaders: [
@@ -1381,22 +1479,32 @@ export default {
         // { text: 'State', value: 'state', sortable: true, class: 'success', width: '50px' }
       ],
       editDialog: false,
+      pelepasanDialog: false,
       editedItem: {
+        name: '',
+        ident: '',
         gelanghso: '',
         annex14: '',
-        pelepasan: ''        
+        pelepasan: ''
       },
-      ss: [], //saringan sampel(ss)
+      defaultItem: {
+        name: '',
+        ident: '',
+        gelanghso: '',
+        annex14: '',
+        pelepasan: ''
+      },
+      ss: [], // saringan sampel(ss)
       ssHeaders: [
         { text: 'Jenis Sampel', value: 'jenissampel', sortable: true, class: 'success', width: '50px' },
         { text: 'Sampel TCA', value: 'sampeltca', sortable: true, class: 'success', width: '160px' },
         { text: 'Berapa Kali Dipanggil', value: 'bildipanggil', sortable: true, class: 'success', width: '50px' },
         { text: 'Sampel Diambil', value: 'sampeldiambil', sortable: true, class: 'success', width: '50px' },
-        { text: 'Keputusan Sampel', value: 'sampelres', sortable: true, class: 'success', width: '50px' },
+        { text: 'Keputusan Sampel', value: 'sampelres', sortable: true, class: 'success', width: '50px' }
       ],
       ssPage: 1,
       ssPageCount: 0,
-      ssItemsPerPage: 10,
+      ssItemsPerPage: 10
     }
   },
 
@@ -1423,6 +1531,15 @@ export default {
 
     age () {
       return this.getAge(this.dob)
+    },
+
+    editHSOandSampelTitle () {
+      return this.acdKKIK
+    },
+
+    editHSOandSampelSubtitle () {
+      return this.editedItem.name + '  -  ' +
+        this.editedItem.ident
     }
   },
 
@@ -1885,11 +2002,10 @@ export default {
         tarikhACD: this.tarikhacd
           ? this.tarikhacd
           : '%-%-%'
-        // locality: this.lokalitiKKIK,
-        // district: this.district,
-        // state: this.state
       }
 
+      this.saringanPeoples = []
+      this.acdSearchHint = ''
       try {
         let response
         if (process.env.NODE_ENV === 'production') {
@@ -1904,34 +2020,38 @@ export default {
           )
         }
 
-        for (let i = 0; i < response.data.peoples.length; i++) {
-          const saringanPeople = {
-            ident: response.data.peoples[i].ident,
-            name: response.data.peoples[i].name,
-            tel: response.data.peoples[i].tel,
-            address: response.data.peoples[i].address,
-            // locality: this.lokalitiKKIK,
-            // district: this.district,
-            // state: this.state,
-            tarikhACD: response.data.peoples[i].tarikhACD,
-            comorbid: response.data.peoples[i].comorbid,
-            kategorikes: response.data.peoples[i].kategorikes,
-            gejala: response.data.peoples[i].gejala
-            // jenissampel: response.data.peoples[i].jenissampel,
-            // bildipanggil: parseInt(response.data.peoples[i].bildipanggil),
-            // sampeldiambil: response.data.peoples[i].sampeldiambil,
-            // gelanghso: response.data.peoples[i].gelanghso,
-            // annex14: response.data.peoples[i].annex14,
-            // sampelres: response.data.peoples[i].sampelres,
-            // pelepasan: response.data.peoples[i].pelepasan
+        if (!response.data.peoples) {
+          this.acdSearchHint = 'Rekod tidak dijumpai dalam sistem'
+        } else {
+          for (let i = 0; i < response.data.peoples.length; i++) {
+            const saringanPeople = {
+              ident: response.data.peoples[i].ident,
+              name: response.data.peoples[i].name,
+              tel: response.data.peoples[i].tel,
+              address: response.data.peoples[i].address,
+              // locality: this.lokalitiKKIK,
+              // district: this.district,
+              // state: this.state,
+              tarikhACD: response.data.peoples[i].tarikhACD,
+              comorbid: response.data.peoples[i].comorbid,
+              kategorikes: response.data.peoples[i].kategorikes,
+              gejala: response.data.peoples[i].gejala
+              // jenissampel: response.data.peoples[i].jenissampel,
+              // bildipanggil: parseInt(response.data.peoples[i].bildipanggil),
+              // sampeldiambil: response.data.peoples[i].sampeldiambil,
+              // gelanghso: response.data.peoples[i].gelanghso,
+              // annex14: response.data.peoples[i].annex14,
+              // sampelres: response.data.peoples[i].sampelres,
+              // pelepasan: response.data.peoples[i].pelepasan
+            }
+            saringanPeople.age = this.getAge(response.data.peoples[i].dob)
+            // if (response.data.peoples[i].sampeltca) {
+            //   saringanPeople.sampeltca = new Date(response.data.peoples[i].sampeltca)
+            // } else {
+            //   saringanPeople.sampeltca = null
+            // }
+            this.saringanPeoples.push(saringanPeople)
           }
-          saringanPeople.age = this.getAge(response.data.peoples[i].dob)
-          // if (response.data.peoples[i].sampeltca) {
-          //   saringanPeople.sampeltca = new Date(response.data.peoples[i].sampeltca)
-          // } else {
-          //   saringanPeople.sampeltca = null
-          // }
-          this.saringanPeoples.push(saringanPeople)
         }
       } catch (error) {
         if (error.response) {
@@ -1942,6 +2062,66 @@ export default {
           //
         }
       }
+    },
+
+    async loadHSOandSampel (item) {
+      const payload = {
+        acdName: this.acdKKIK,
+        ident: item.ident
+      }
+      this.ss.length = 0
+
+      try {
+        let response
+        if (process.env.NODE_ENV === 'production') {
+          response = await this.$axios.post(
+            'https://myvaksin.com/acd/saringan/hsoandsampel/get',
+            payload
+          )
+        } else {
+          response = await this.$axios.post(
+            'http://localhost:8080/acd/saringan/hsoandsampel/get',
+            payload
+          )
+        }
+
+        this.editedItem.name = item.name
+        this.editedItem.ident = item.ident
+        this.editedItem.gelanghso = response.data.gelanghso
+        this.editedItem.annex14 = response.data.annex14
+        this.editedItem.pelepasan = response.data.pelepasan
+
+        for (let i = 0; i < response.data.sampels.length; i++) {
+          const sampel = {
+            jenissampel: response.data.sampels[i].jenissampel,
+            bildipanggil: parseInt(response.data.sampels[i].bildipanggil),
+            sampeldiambil: response.data.sampels[i].sampeldiambil,
+            sampelres: response.data.sampels[i].sampelres
+          }
+          if (response.data.sampels[i].sampeltca) {
+            sampel.sampeltca = new Date(response.data.sampels[i].sampeltca)
+          } else {
+            sampel.sampeltca = null
+          }
+          // ss (Saringan Sampel)
+          this.ss.push(sampel)
+        }
+        this.editDialog = true
+      } catch (error) {
+        if (error.response) {
+          alert('Masalah network, sila cuba sebentar lagi')
+        } else if (error.request) {
+          //
+        } else {
+          //
+        }
+      }
+    },
+
+    close () {
+      this.editedItem = Object.assign({}, this.defaultItem)
+      this.ss.length = 0
+      this.editDialog = false
     },
 
     async saveSaringanItemPeople (ident, col, val) {
@@ -1974,8 +2154,86 @@ export default {
       }
     },
 
+    pelepasanDialogNo () {
+      this.editedItem.pelepasan = false
+      this.pelepasanDialog = false
+      this.saveSaringanItemHSO(
+        this.editedItem.ident,
+        'pelepasan',
+        this.editedItem.pelepasan
+      )
+    },
+
+    pelepasanDialogYes () {
+      this.editedItem.pelepasan = true
+      this.pelepasanDialog = false
+      this.saveSaringanItemHSO(
+        this.editedItem.ident,
+        'pelepasan',
+        this.editedItem.pelepasan
+      )
+    },
+
+    verifyBeforePelepasan () {
+      // if (this.editedItem.pelepasan) { return }
+      let invalid = true
+      for (let i = 0; i < this.ss.length; i++) {
+        invalid = true
+        if (this.ss[i].sampelres === 'Negative') {
+          invalid = false
+        }
+      }
+      return invalid
+    },
+
+    saveSaringanItemPelepasan () {
+      const invalidForPelepasan = this.verifyBeforePelepasan()
+      if (invalidForPelepasan) {
+        this.pelepasanDialog = true
+      }
+
+      // this.saveSaringanItemHSO(
+      //   this.editedItem.ident,
+      //   'pelepasan',
+      //   this.editedItem.pelepasan
+      // )
+    },
+
+    async saveSaringanItemHSO (ident, col, val) {
+      const payload = {
+        acdName: this.acdKKIK,
+        ident,
+        col,
+        val
+      }
+
+      try {
+        if (process.env.NODE_ENV === 'production') {
+          await this.$axios.post(
+            'https://myvaksin.com/acd/saringan/hso/updateoc',
+            payload
+          )
+        } else {
+          await this.$axios.post(
+            'http://localhost:8080/acd/saringan/hso/updateoc',
+            payload
+          )
+        }
+        alert('Maklumat dikemaskinikan')
+      } catch (error) {
+        if (error.response) {
+          alert('Masalah network, sila cuba sebentar lagi')
+        } else if (error.request) {
+          //
+        } else {
+          //
+        }
+      }
+    },
+
     async saveSaringanItemACDActivity (tarikhACD, ident, col, val) {
       const payload = {
+        acdName: this.acdKKIK,
         tarikhACD,
         ident,
         col,
@@ -2007,6 +2265,7 @@ export default {
 
     async saveSaringanItemSampel (ident, col, val) {
       const payload = {
+        acdName: this.acdKKIK,
         ident,
         col
       }
